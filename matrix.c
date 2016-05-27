@@ -153,7 +153,7 @@ Matrix* MakeColumnMatrix(Matrix* column_matrix, int column_no) {
   else {
     for (int n = 0; n < new_matrix->rows; n++) {
       if (n < column_no)  
-        new_matrix->data[n][0] = column_matrix->data[column_no-1][n];
+        new_matrix->data[n][0] = column_matrix->data[n][0];
       else if (n == column_no) {
         double norm = GetNorm(column_matrix);
         double value = sqrt(pow(norm, 2) - pow(column_matrix->data[n-1][0],2));
@@ -232,26 +232,39 @@ void CopyMatrix(Matrix* A, Matrix* B) {
 }
 
 void Bidiagonalize(Matrix* A) {
-  int m = 0, n = 0;
+  int m = 0, n = 0, m_limit, n_limit;
+  if (A->rows > A->columns) {
+    m_limit = A->columns;
+    n_limit = A->columns - 2;
+  }
+  else {
+    m_limit = A->rows - 1;
+    n_limit = A->rows;
+  }
   Matrix *x, *y, *z, *w, *w_t, *I, *product, *product2, *P, *final;
   while (1){
-    if (m == A->rows - 1 && n == A->columns - 2)  break;
-    if (m < A->rows - 1) {
+    if (m == m_limit && n == n_limit)  break;
+    if (m < m_limit) {
+      //printf("row mainp %d\n",m);
       I = GetIdentityMatrix(A->rows);
       x = GetColumnMatrix(A, m);
-      //WriteMatrix(stdout, x);
       y = MakeColumnMatrix(x, m);
-      //WriteMatrix(stdout, y);
       z = Difference(x, y);
       w = ScalarDivide(z, GetNorm(z));
       w_t = Transpose(w);
       product = Product(w, w_t);
-      //WriteMatrix(stdout, product);
       product2 = ScalarDivide(product, 0.5);
       P = Difference(I, product2);
       final = Product(P, A);
       CopyMatrix(A, final);
-      m++;
+      /*if (m > 1) {
+        WriteMatrix(stdout, x);line
+        WriteMatrix(stdout, y);line
+        WriteMatrix(stdout, z);line
+        WriteMatrix(stdout, product);line
+        WriteMatrix(stdout, product2);line
+        WriteMatrix(stdout, A); line
+      }*/
       DestroyMatrix(I);
       DestroyMatrix(x);
       DestroyMatrix(y);
@@ -261,10 +274,11 @@ void Bidiagonalize(Matrix* A) {
       DestroyMatrix(product2);
       DestroyMatrix(P);
       DestroyMatrix(final);
-      //WriteMatrix(stdout, A);
+      m++;
+      //WriteMatrix(fout, A);
     }
-    WriteMatrix(stdout, A);line
-    if (n < A->columns - 2) {
+    if (n < n_limit) {
+      //printf("column mainp %d\n", n);
       I = GetIdentityMatrix(A->columns);
       x = GetRowMatrix(A, n); 
       y = MakeRowMatrix(x, n); 
@@ -276,7 +290,6 @@ void Bidiagonalize(Matrix* A) {
       P = Difference(I, product2);
       final = Product(A, P);
       CopyMatrix(A, final);
-      n++;
       DestroyMatrix(I);
       DestroyMatrix(x);
       DestroyMatrix(y);
@@ -286,9 +299,8 @@ void Bidiagonalize(Matrix* A) {
       DestroyMatrix(product2);
       DestroyMatrix(P);
       DestroyMatrix(final);
-      //WriteMatrix(stdout, A);
+      n++;
+      //WriteMatrix(fout, A);
     }
-    WriteMatrix(stdout, A); line
   }
-  WriteMatrix(stdout, A);
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "matrix.h"
+#define line printf("\n");
 
 #define FALSE 0
 #define TRUE 1
@@ -27,6 +28,8 @@ int main(int argc, char **argv) {
   Matrix *A = NULL;
   A = ReadMatrix(input_filename);
   Bidiagonalize(A);
+  WriteMatrix(fout, A);
+
   if (!(fout == stdout)) {
     printf("Output was written in %s\n", output_filename);
     fclose(fout);
