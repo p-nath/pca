@@ -44,6 +44,8 @@ Matrix* GetIdentityMatrix(int x); // x = rows = columns
 
 void CopyMatrix(Matrix* A, Matrix* B); // B is the matrix which is copied to A
 
-void Bidiagonalize(Matrix* A);
+void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V_t);
+
+void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R);
 
 #endif

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "matrix.h"
 #define line printf("\n");
 
@@ -25,10 +26,28 @@ int main(int argc, char **argv) {
   FILE *fout = NULL;
   if (!(fout = fopen(output_filename,"w")))  fout = stdout;
 
-  Matrix *A = NULL;
+  /*Matrix *A = NULL;
   A = ReadMatrix(input_filename);
-  Bidiagonalize(A);
+  //WriteMatrix(fout, A);
+
+  Matrix* U = NULL, *V_t = NULL;
+  Bidiagonalize(A, U, V_t);
   WriteMatrix(fout, A);
+
+  Matrix* A_t = Transpose(A);
+  Matrix* B = Product(A_t,A);*/
+
+  Matrix* B = ReadMatrix(input_filename);
+  WriteMatrix(stdout, B); line
+
+  Matrix *Q = CreateNewMatrix(B->rows, B->columns), *R = CreateNewMatrix(B->rows, B->columns);
+  QR_Decomposition(B, Q, R);
+
+  WriteMatrix(stdout,Q);line
+  WriteMatrix(stdout, R);line
+  WriteMatrix(stdout, Product(Q, R));
+
+
 
   if (!(fout == stdout)) {
     printf("Output was written in %s\n", output_filename);

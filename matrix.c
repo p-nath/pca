@@ -231,11 +231,15 @@ void CopyMatrix(Matrix* A, Matrix* B) {
   }
 }
 
-void Bidiagonalize(Matrix* A) {
+void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
   int m = 0, n = 0, m_limit, n_limit;
   if (A->rows > A->columns) {
     m_limit = A->columns;
     n_limit = A->columns - 2;
+  }
+  else if (A->rows == A->columns) {
+    m_limit = A->columns - 1;
+    n_limit = A->rows - 2;
   }
   else {
     m_limit = A->rows - 1;
@@ -303,4 +307,44 @@ void Bidiagonalize(Matrix* A) {
       //WriteMatrix(fout, A);
     }
   }
+}
+
+void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
+  double t, r, c, s;
+  Matrix* P = NULL; 
+  Matrix* Q_temp = NULL;
+  Matrix* G_t = NULL;
+  Matrix* G = CreateNewMatrix(R->rows, R->columns);
+  //Givens rotation
+  CopyMatrix(R, B);
+  for (int count = 0; count < B->rows-1; count++) {
+    t = R->data[count+1][count];
+    r = sqrt(pow(R->data[count][count], 2) + pow(t, 2));
+    c = R->data[count][count]/r;
+    s = t/r;
+    for (int i = 0; i < G->rows; i++) {
+      for (int j = 0; j <G->columns; j++) {
+        if ((i == count && j == count) || (i == count+1 && j == count+1))  G->data[i][j] = c;
+        else if (i == count+1 && j == count)  G->data[i][j] = -1*s;
+        else if (i == count && j == count+1)  G->data[i][j] = s;
+        else if (i == j)  G->data[i][j] = 1;
+        else  G->data[i][j] = 0;
+      }
+    }
+    P = Product(G, R);line
+    CopyMatrix(R, P);
+    G_t = Transpose(G);
+    if (count == 0) CopyMatrix(Q, G_t);
+    else {
+      Q_temp = Product(Q, G_t);
+      CopyMatrix(Q, Q_temp);
+      DestroyMatrix(Q_temp);
+    }
+    DestroyMatrix(G_t);
+    DestroyMatrix(P);
+  }
+  DestroyMatrix(G);
+  /*WriteMatrix(stdout,Q);line
+  WriteMatrix(stdout, R);line
+  WriteMatrix(stdout, Product(Q, R));*/
 }
