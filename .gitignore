@@ -2,3 +2,5 @@
 *.o
 pca_main
 output.txt
+new.txt
+output_py.txt

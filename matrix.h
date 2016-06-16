@@ -48,4 +48,6 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V_t);
 
 void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R);
 
+void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R);
+
 #endif

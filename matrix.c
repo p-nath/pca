@@ -3,6 +3,7 @@
 #include <math.h>
 #include "matrix.h"
 #define line printf("\n");
+#define test printf("%d\n",__LINE__);
 
 Matrix* CreateNewMatrix(int n, int m) {
   Matrix* matrix = (Matrix*)malloc(sizeof(Matrix));
@@ -223,9 +224,9 @@ Matrix* GetIdentityMatrix(int x) {
 }
 
 void CopyMatrix(Matrix* A, Matrix* B) {
-  if (A->rows != B->rows || A->columns != B->columns)  return;
-  for (int n = 0; n < A->rows; n++) {
-    for (int m = 0; m < A->columns; m++) {
+  //if (A->rows != B->rows || A->columns != B->columns)  return;
+  for (int n = 0; n < B->rows; n++) {
+    for (int m = 0; m < B->columns; m++) {
       A->data[n][m] = B->data[n][m];
     }
   }
@@ -245,7 +246,8 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
     m_limit = A->rows - 1;
     n_limit = A->rows;
   }
-  Matrix *x, *y, *z, *w, *w_t, *I, *product, *product2, *P, *final;
+
+  Matrix *x, *y, *z, *w, *w_t, *I, *product, *product2, *U_curr, *U_final, *V_final, *V_curr, *A_final;
   while (1){
     if (m == m_limit && n == n_limit)  break;
     if (m < m_limit) {
@@ -258,9 +260,16 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
       w_t = Transpose(w);
       product = Product(w, w_t);
       product2 = ScalarDivide(product, 0.5);
-      P = Difference(I, product2);
-      final = Product(P, A);
-      CopyMatrix(A, final);
+      U_curr = Difference(I, product2);
+      A_final = Product(U_curr, A);
+      CopyMatrix(A, A_final);
+      if (m ==0)
+        CopyMatrix(U,U_curr);
+      else {
+        U_final = Product(U_curr,U);
+        CopyMatrix(U, U_final);
+        DestroyMatrix(U_final);
+      }
       /*if (m > 1) {
         WriteMatrix(stdout, x);line
         WriteMatrix(stdout, y);line
@@ -269,6 +278,7 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
         WriteMatrix(stdout, product2);line
         WriteMatrix(stdout, A); line
       }*/
+      //WriteMatrix(stdout, w); line
       DestroyMatrix(I);
       DestroyMatrix(x);
       DestroyMatrix(y);
@@ -276,8 +286,7 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
       DestroyMatrix(w);
       DestroyMatrix(product);
       DestroyMatrix(product2);
-      DestroyMatrix(P);
-      DestroyMatrix(final);
+      DestroyMatrix(A_final);
       m++;
       //WriteMatrix(fout, A);
     }
@@ -291,9 +300,20 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
       w_t = Transpose(w);
       product = Product(w_t, w);
       product2 = ScalarDivide(product, 0.5);
-      P = Difference(I, product2);
-      final = Product(A, P);
-      CopyMatrix(A, final);
+      V_curr = Difference(I, product2);
+      A_final = Product(A, V_curr);
+      
+      CopyMatrix(A, A_final);
+      if (n == 0)
+        CopyMatrix(V,V_curr);
+      else {
+        V_final = Product(V,V_curr);
+        CopyMatrix(V, V_final);
+        DestroyMatrix(V_final);
+      }
+      //WriteMatrix(stdout, V); line
+      //WriteMatrix(stdout, V_curr); line
+      //WriteMatrix(stdout, w); line
       DestroyMatrix(I);
       DestroyMatrix(x);
       DestroyMatrix(y);
@@ -301,20 +321,20 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
       DestroyMatrix(w);
       DestroyMatrix(product);
       DestroyMatrix(product2);
-      DestroyMatrix(P);
-      DestroyMatrix(final);
+      DestroyMatrix(A_final);
       n++;
+
       //WriteMatrix(fout, A);
     }
   }
 }
-
+ //works only for square symmetrimatrices
 void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
   double t, r, c, s;
   Matrix* P = NULL; 
   Matrix* Q_temp = NULL;
   Matrix* G_t = NULL;
-  Matrix* G = CreateNewMatrix(R->rows, R->columns);
+  Matrix* G = CreateNewMatrix(B->rows, B->columns);
   //Givens rotation
   CopyMatrix(R, B);
   for (int count = 0; count < B->rows-1; count++) {
@@ -323,7 +343,7 @@ void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
     c = R->data[count][count]/r;
     s = t/r;
     for (int i = 0; i < G->rows; i++) {
-      for (int j = 0; j <G->columns; j++) {
+      for (int j = 0; j < G->columns; j++) {
         if ((i == count && j == count) || (i == count+1 && j == count+1))  G->data[i][j] = c;
         else if (i == count+1 && j == count)  G->data[i][j] = -1*s;
         else if (i == count && j == count+1)  G->data[i][j] = s;
@@ -331,7 +351,9 @@ void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
         else  G->data[i][j] = 0;
       }
     }
-    P = Product(G, R);line
+    //WriteMatrix(stdout, R);line
+    //WriteMatrix(stdout, G);line
+    P = Product(G, R);
     CopyMatrix(R, P);
     G_t = Transpose(G);
     if (count == 0) CopyMatrix(Q, G_t);
@@ -348,3 +370,40 @@ void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
   WriteMatrix(stdout, R);line
   WriteMatrix(stdout, Product(Q, R));*/
 }
+
+void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R) {
+  QR_Decomposition(B, Q, R);
+  Matrix* A2 = Product(R, Q);
+  Matrix* Q_temp = CreateNewMatrix(Q->rows, Q->columns);
+  Matrix* Q_t_temp = CreateNewMatrix(Q->columns, Q->rows);
+  Matrix* Q_product = NULL, *Q_t_product = NULL;
+  Matrix* _Q_t = Transpose(Q);
+
+  CopyMatrix(Q_t, _Q_t);
+  DestroyMatrix(_Q_t);
+  CopyMatrix(Q_temp, Q);
+  CopyMatrix(Q_t_temp, Q_t);
+
+  for(int i = 0; i < 20; i++) {
+    QR_Decomposition(A2, Q, R);
+    A2 = Product(R, Q);
+    Q_product = Product(Q_temp, Q);
+    _Q_t = Transpose(Q);
+    //WriteMatrix(stdout, _Q_t); line
+    CopyMatrix(Q_t, _Q_t);
+    Q_t_product = Product(Q_t, Q_t_temp);
+    CopyMatrix(Q_temp, Q_product);
+    CopyMatrix(Q_t_temp, Q_t_product);
+    DestroyMatrix(_Q_t);
+  }
+  CopyMatrix(Q, Q_product);
+  CopyMatrix(Q_t, Q_t_product);
+  DestroyMatrix(Q_product);
+  DestroyMatrix(Q_t_product);
+
+  
+  DestroyMatrix(A2);
+  DestroyMatrix(Q_temp);
+  DestroyMatrix(Q_t_temp);
+
+  }

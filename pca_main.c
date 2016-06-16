@@ -3,7 +3,7 @@
 #include <math.h>
 #include "matrix.h"
 #define line printf("\n");
-
+#define test printf("%d\n",__LINE__);
 #define FALSE 0
 #define TRUE 1
 
@@ -26,28 +26,41 @@ int main(int argc, char **argv) {
   FILE *fout = NULL;
   if (!(fout = fopen(output_filename,"w")))  fout = stdout;
 
-  /*Matrix *A = NULL;
+  Matrix *A = NULL;
   A = ReadMatrix(input_filename);
-  //WriteMatrix(fout, A);
+  WriteMatrix(stdout, A); line
 
-  Matrix* U = NULL, *V_t = NULL;
-  Bidiagonalize(A, U, V_t);
-  WriteMatrix(fout, A);
+  Matrix *_U = CreateNewMatrix(A->rows, A->rows), *_V = CreateNewMatrix(A->columns, A->columns);
+  Bidiagonalize(A, _U, _V);
+  printf("Bidiagonal Matrix: \n");
+  WriteMatrix(stdout, A); line
+  printf("_U: \n");
+  WriteMatrix(stdout, _U); line
+  printf("_V: \n");
+  WriteMatrix(stdout, _V); line
 
   Matrix* A_t = Transpose(A);
-  Matrix* B = Product(A_t,A);*/
+  Matrix* B = Product(A_t,A);
 
-  Matrix* B = ReadMatrix(input_filename);
+  printf("symmetric square matrix(B*B_t) : \n");
   WriteMatrix(stdout, B); line
 
-  Matrix *Q = CreateNewMatrix(B->rows, B->columns), *R = CreateNewMatrix(B->rows, B->columns);
-  QR_Decomposition(B, Q, R);
+  Matrix *Q = CreateNewMatrix(B->rows, B->rows), *Q_t = CreateNewMatrix(B->rows, B->rows), *R = CreateNewMatrix(B->rows, B->columns);
+  QR_Converge(B, Q, Q_t, R);
 
-  WriteMatrix(stdout,Q);line
+  printf("after QR covergence (actually the SVD of B*B_t): \n");
+  WriteMatrix(stdout, Q);line
   WriteMatrix(stdout, R);line
-  WriteMatrix(stdout, Product(Q, R));
+  WriteMatrix(stdout, Q_t);line
 
 
+  DestroyMatrix(B);
+  DestroyMatrix(Q);
+  DestroyMatrix(Q_t);
+  DestroyMatrix(R);
+  DestroyMatrix(_U);
+  DestroyMatrix(_V);
+  DestroyMatrix(A);
 
   if (!(fout == stdout)) {
     printf("Output was written in %s\n", output_filename);
