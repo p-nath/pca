@@ -28,9 +28,9 @@ int main(int argc, char **argv) {
 
   Matrix *A = NULL;
   A = ReadMatrix(input_filename);
-  WriteMatrix(stdout, A); line
+  //WriteMatrix(stdout, A); line
 
-  Matrix *_U = CreateNewMatrix(A->rows, A->rows), *_V = CreateNewMatrix(A->columns, A->columns);
+  /*Matrix *_U = CreateNewMatrix(A->rows, A->rows), *_V = CreateNewMatrix(A->columns, A->columns);
   Bidiagonalize(A, _U, _V);
   printf("Bidiagonal Matrix: \n");
   WriteMatrix(stdout, A); line
@@ -41,16 +41,29 @@ int main(int argc, char **argv) {
 
   Matrix* A_t = Transpose(A);
   Matrix* B = Product(A_t,A);
+  //Matrix* B = CreateNewMatrix(A->rows, A->columns);
+  //CopyMatrix(B, A);
 
   printf("symmetric square matrix(B*B_t) : \n");
   WriteMatrix(stdout, B); line
 
-  Matrix *Q = CreateNewMatrix(B->rows, B->rows), *Q_t = CreateNewMatrix(B->rows, B->rows), *R = CreateNewMatrix(B->rows, B->columns);
+  Matrix *Q, *Q_t , *R = CreateNewMatrix(B->rows, B->columns);
+  if (B->rows > B->columns) {
+    Q = GetIdentityMatrix(B->rows);
+    Q_t = GetIdentityMatrix(B->rows);
+  }
+  else {
+    Q = GetIdentityMatrix(B->columns);
+    Q_t = GetIdentityMatrix(B->columns);
+  }
+  
   QR_Converge(B, Q, Q_t, R);
+  //QR_Decomposition(B, Q, R);
 
   printf("after QR covergence (actually the SVD of B*B_t): \n");
   WriteMatrix(stdout, Q);line
   WriteMatrix(stdout, R);line
+  //WriteMatrix(stdout, B);line
   WriteMatrix(stdout, Q_t);line
 
 
@@ -60,7 +73,21 @@ int main(int argc, char **argv) {
   DestroyMatrix(R);
   DestroyMatrix(_U);
   DestroyMatrix(_V);
-  DestroyMatrix(A);
+  DestroyMatrix(A);*/
+
+  Matrix *U = GetIdentityMatrix(A->columns), *V = GetIdentityMatrix(A->columns), *Z = CreateNewMatrix(A->columns, A->columns);
+  SVD(A, U, Z, V);
+
+  printf("after SVD(U, Z, V) \n");
+  WriteMatrix(stdout, U);line
+  WriteMatrix(stdout, Z);line
+  WriteMatrix(stdout, V);line
+
+  Matrix* W = CreateProjectionMatrix(U, 4, 2);
+  //WriteMatrix(stdout, W);
+
+  Matrix *Y = Product(A, W);
+  WriteMatrix(fout, Y);
 
   if (!(fout == stdout)) {
     printf("Output was written in %s\n", output_filename);

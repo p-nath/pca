@@ -50,4 +50,10 @@ void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R);
 
 void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R);
 
+void QR_Dec_sq(Matrix* B, Matrix* Q, Matrix* R);
+
+void SVD(Matrix* A, Matrix* U, Matrix* Z, Matrix* V);
+
+Matrix* CreateProjectionMatrix(Matrix* U, int initial_dimensions, int final_dimensions);
+
 #endif
