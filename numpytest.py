@@ -1,8 +1,10 @@
 import numpy as np
+import sys
 
-file = open("other.txt", 'r')
-file.readline()
-l = [ map(float,line.split(' ')) for line in file ]
+fname = str(sys.argv[1])
+fin = open(fname, 'r')
+fin.readline()
+l = [ map(float,line.split(' ')) for line in fin ]
 X = np.array(l)
 covariance =  np.cov(X.T)
 U,S,V = np.linalg.svd(X.T)
@@ -16,4 +18,4 @@ print "R=",r,'\n'
 
 #np.savetxt('output_py.txt', covariance, fmt = '%.6f')
 
-file.close()
+fin.close()
