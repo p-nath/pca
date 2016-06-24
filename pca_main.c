@@ -2,88 +2,56 @@
 #include <stdlib.h>
 #include <math.h>
 #include "matrix.h"
+#include "svd.c"
+
 #define line printf("\n");
 #define test printf("%d\n",__LINE__);
 #define FALSE 0
 #define TRUE 1
 
-int parse_args(int argc, char** argv, char **input_filename, char **output_filename) {
+int parse_args(int argc, char** argv, char **input_filename, 
+                  char **output_filename, int* hyper_parameter) {
   if (argc >= 2){
     *input_filename = argv[1];
-    if (argc == 3)
+    if (argc >= 3){
       *output_filename = argv[2];
+      if (argc == 4)
+        *hyper_parameter = atoi(argv[3]);
+    }
     return TRUE;
   }
   else {
-    printf("%s <input_filename> <output_filename>\n", argv[0]);
+    printf("%s <input_filename> <output_filename> <hyper_parameter>\n", argv[0]);
     return FALSE;
   }
 }
 
 int main(int argc, char **argv) {
   char *input_filename = NULL, *output_filename = NULL;
-  if (!parse_args(argc, argv, &input_filename, &output_filename))  exit(-1);
+  int hyper_parameter = 0;
+  if (!parse_args(argc, argv, &input_filename, &output_filename, &hyper_parameter))  exit(-1);
   FILE *fout = NULL;
   if (!(fout = fopen(output_filename,"w")))  fout = stdout;
+  if (hyper_parameter == 0)  hyper_parameter = 30;
 
   Matrix *A = NULL;
   A = ReadMatrix(input_filename);
-  //WriteMatrix(stdout, A); line
+  Matrix *U = GetIdentityMatrix(A->columns);
+  Matrix *V = GetIdentityMatrix(A->columns);
+  Matrix *Z = CreateNewMatrix(A->columns, A->columns);
+  SVD(A, U, Z, V, hyper_parameter);
 
-  /*Matrix *_U = CreateNewMatrix(A->rows, A->rows), *_V = CreateNewMatrix(A->columns, A->columns);
-  Bidiagonalize(A, _U, _V);
-  printf("Bidiagonal Matrix: \n");
-  WriteMatrix(stdout, A); line
-  printf("_U: \n");
-  WriteMatrix(stdout, _U); line
-  printf("_V: \n");
-  WriteMatrix(stdout, _V); line
-
-  Matrix* A_t = Transpose(A);
-  Matrix* B = Product(A_t,A);
-  //Matrix* B = CreateNewMatrix(A->rows, A->columns);
-  //CopyMatrix(B, A);
-
-  printf("symmetric square matrix(B*B_t) : \n");
-  WriteMatrix(stdout, B); line
-
-  Matrix *Q, *Q_t , *R = CreateNewMatrix(B->rows, B->columns);
-  if (B->rows > B->columns) {
-    Q = GetIdentityMatrix(B->rows);
-    Q_t = GetIdentityMatrix(B->rows);
-  }
-  else {
-    Q = GetIdentityMatrix(B->columns);
-    Q_t = GetIdentityMatrix(B->columns);
-  }
-  
-  QR_Converge(B, Q, Q_t, R);
-  //QR_Decomposition(B, Q, R);
-
-  printf("after QR covergence (actually the SVD of B*B_t): \n");
-  WriteMatrix(stdout, Q);line
-  WriteMatrix(stdout, R);line
-  //WriteMatrix(stdout, B);line
-  WriteMatrix(stdout, Q_t);line
-
-
-  DestroyMatrix(B);
-  DestroyMatrix(Q);
-  DestroyMatrix(Q_t);
-  DestroyMatrix(R);
-  DestroyMatrix(_U);
-  DestroyMatrix(_V);
-  DestroyMatrix(A);*/
-
-  Matrix *U = GetIdentityMatrix(A->columns), *V = GetIdentityMatrix(A->columns), *Z = CreateNewMatrix(A->columns, A->columns);
-  SVD(A, U, Z, V);
-
-  printf("after SVD(U, Z, V) \n");
+  printf("after SVD(U, S, V) \n");
+  printf("U = \n");
   WriteMatrix(stdout, U);line
+  printf("S = \n");
   WriteMatrix(stdout, Z);line
+  printf("V = \n");
   WriteMatrix(stdout, V);line
 
-  Matrix* W = CreateProjectionMatrix(U, 4, 2);
+  int initial_dimensions = 4;
+  int final_dimensions = 2;
+  Matrix* W = CreateProjectionMatrix(U, initial_dimensions, final_dimensions);
   //WriteMatrix(stdout, W);
 
   Matrix *Y = Product(A, W);
