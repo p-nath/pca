@@ -1,19 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "matrix.h"
 #include <assert.h>
-#define line printf("\n");
-#define test printf("%d\n",__LINE__);
-
-void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R);
-
-void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R, int hyper_parameter);
-
-void SVD(Matrix* A, Matrix* U, Matrix* Z, Matrix* V, int hyper_parameter);
-
-Matrix* CreateProjectionMatrix(Matrix* U, int initial_dimensions, int final_dimensions);
-
+#include "matrix.h"
+#include "svd.h"
 
 Matrix* assert_matrix(Matrix* A) {
   assert(A->rows == A->columns);
@@ -97,7 +87,9 @@ void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R, int hyper_paramet
 
 void SVD(Matrix* A, Matrix* U, Matrix* Z, Matrix* V, int hyper_parameter) {
   Matrix* covariance = Covariance(A);
-  WriteMatrix(stdout, covariance);line
+  printf("The covariance matrix:\n");
+  WriteMatrix(stdout, covariance);
+  printf("\n");
   QR_Converge(covariance, U, V, Z, hyper_parameter);
   DestroyMatrix(covariance);
 }

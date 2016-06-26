@@ -2,10 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include "matrix.h"
-#include "svd.c"
+#include "svd.h"
 
-#define line printf("\n");
-#define test printf("%d\n",__LINE__);
 #define FALSE 0
 #define TRUE 1
 
@@ -43,11 +41,14 @@ int main(int argc, char **argv) {
 
   printf("after SVD(U, S, V) \n");
   printf("U = \n");
-  WriteMatrix(stdout, U);line
+  WriteMatrix(stdout, U);
+  printf("\n");
   printf("S = \n");
-  WriteMatrix(stdout, Z);line
+  WriteMatrix(stdout, Z);
+  printf("\n");
   printf("V = \n");
-  WriteMatrix(stdout, V);line
+  WriteMatrix(stdout, V);
+  printf("\n");
 
   int initial_dimensions = 4;
   int final_dimensions = 2;

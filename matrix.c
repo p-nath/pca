@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "matrix.h"
-#define line printf("\n");
-#define test printf("%d\n",__LINE__);
 
 Matrix* CreateNewMatrix(int n, int m) {
   Matrix* matrix = (Matrix*)malloc(sizeof(Matrix));
@@ -224,7 +222,6 @@ Matrix* GetIdentityMatrix(int x) {
 }
 
 void CopyMatrix(Matrix* A, Matrix* B) {
-  //if (A->rows != B->rows || A->columns != B->columns)  return;
   for (int n = 0; n < A->rows; n++) {
     for (int m = 0; m < A->columns; m++) {
       A->data[n][m] = B->data[n][m];
@@ -270,15 +267,6 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
         CopyMatrix(U, U_final);
         DestroyMatrix(U_final);
       }
-      /*if (m > 1) {
-        WriteMatrix(stdout, x);line
-        WriteMatrix(stdout, y);line
-        WriteMatrix(stdout, z);line
-        WriteMatrix(stdout, product);line
-        WriteMatrix(stdout, product2);line
-        WriteMatrix(stdout, A); line
-      }*/
-      //WriteMatrix(stdout, w); line
       DestroyMatrix(I);
       DestroyMatrix(x);
       DestroyMatrix(y);
@@ -288,10 +276,8 @@ void Bidiagonalize(Matrix* A, Matrix* U, Matrix* V) {
       DestroyMatrix(product2);
       DestroyMatrix(A_final);
       m++;
-      //WriteMatrix(fout, A);
     }
     if (n < n_limit) {
-      //printf("column mainp %d\n", n);
       I = GetIdentityMatrix(A->columns);
       x = GetRowMatrix(A, n); 
       y = MakeRowMatrix(x, n); 

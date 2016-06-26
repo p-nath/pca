@@ -1,13 +1,17 @@
 import numpy as np
 import sys
 
-def foo():
-  if (len(sys.argv) > 1):
-    fname = str(sys.argv[1])
+def main():
+  fname = "input.txt"
+
 
 
 if __name__ == '__main__':
-  fname = "input.txt"
+  main()
+else:
+  if (len(sys.argv) > 1):
+    fname = str(sys.argv[1])
+
 
 fin = open(fname, 'r')
 fin.readline()
@@ -18,5 +22,4 @@ U,S,V = np.linalg.svd(covariance)
 print "U = ",U,'\n'
 print "S = ",S,'\n'
 print "V = ",V,'\n'
-
 fin.close()

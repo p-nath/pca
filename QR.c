@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "matrix.h"
-#define line printf("\n");
-#define test printf("%d\n",__LINE__);
 
 void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
   double t, r, c, s;
