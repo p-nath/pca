@@ -5,14 +5,14 @@
 #include "matrix.h"
 #include "svd.h"
 
-Matrix* assert_matrix(Matrix* A) {
+Matrix* assert_square_matrix(Matrix* A) {
   assert(A->rows == A->columns);
   return A;
 }
 
 //for square symmetric matrices / covariance matrices
 void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
-  assert_matrix(B);
+  assert_square_matrix(B);
   double t, r, c, s;
   Matrix* P = NULL; 
   Matrix* Q_temp = NULL;
@@ -49,7 +49,7 @@ void QR_Decomposition(Matrix* B, Matrix* Q, Matrix* R) {
   DestroyMatrix(G);
 }
 
-void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R, int hyper_parameter) {
+void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R, int max_iterations) {
   QR_Decomposition(B, Q, R);
   Matrix* A2 = Product(R, Q);
   Matrix* Q_temp = CreateNewMatrix(Q->rows, Q->columns);
@@ -62,7 +62,7 @@ void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R, int hyper_paramet
   CopyMatrix(Q_temp, Q);
   CopyMatrix(Q_t_temp, Q_t);
 
-  for(int i = 0; i < hyper_parameter; i++) {
+  for(int i = 0; i < max_iterations; i++) {
     QR_Decomposition(A2, Q, R);
     A2 = Product(R, Q);
     Q_product = Product(Q_temp, Q);
@@ -85,12 +85,12 @@ void QR_Converge(Matrix* B, Matrix* Q, Matrix* Q_t, Matrix* R, int hyper_paramet
 
 }
 
-void SVD(Matrix* A, Matrix* U, Matrix* Z, Matrix* V, int hyper_parameter) {
+void SVD(Matrix* A, Matrix* U, Matrix* Z, Matrix* V, int max_iterations) {
   Matrix* covariance = Covariance(A);
   printf("The covariance matrix:\n");
   WriteMatrix(stdout, covariance);
   printf("\n");
-  QR_Converge(covariance, U, V, Z, hyper_parameter);
+  QR_Converge(covariance, U, V, Z, max_iterations);
   DestroyMatrix(covariance);
 }
 
