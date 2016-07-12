@@ -2,50 +2,41 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdbool.h>
 #include "matrix.h"
 #include "svd.h"
-
-#define FALSE 0
-#define TRUE 1
 
 void help(char** argv) {
   printf("%s -i <input_filename> -o <output_filename> -m <max_iterations>\n", argv[0]);
 }
 
-int parse_args(int argc, char** argv, char **input_filename, 
+bool parse_args(int argc, char** argv, char **input_filename, 
                   char **output_filename, int* max_iterations) {
-  if (argc >= 3) {
-    if (!strcmp(argv[1], "-i"))  *input_filename = argv[2];
-    else {
-      help(argv);
-      return FALSE;
+  if (argc < 3)  return 0;
+  for (int i = 0; i < argc; i++) {
+    if (strcmp(argv[i], "-i") == 0) {
+      i++;
+      *input_filename = argv[i];
     }
-    if (argc >= 5) {
-      if (!strcmp(argv[3], "-o"))  *output_filename = argv[4];
-      else {
-        help(argv);
-        return FALSE;
-      }
-      if (argc == 7) {
-        if (!strcmp(argv[5], "-m"))  *max_iterations = atoi(argv[6]);    
-        else {
-          help(argv);
-          return FALSE;
-        }
-      }
+    if (strcmp(argv[i], "-o") == 0) {
+      i++;
+      *output_filename = argv[i];
+    }
+    if (strcmp(argv[i], "-m") == 0) {
+      i++;
+      *max_iterations = atoi(argv[i]);
     }
   }
-  else {
-    help(argv);
-    return FALSE;
-  }
-  return TRUE;
+  return 1;
 }
 
 int main(int argc, char **argv) {
   char *input_filename = NULL, *output_filename = NULL;
   int max_iterations = 0;
-  if (!parse_args(argc, argv, &input_filename, &output_filename, &max_iterations))  exit(-1);
+  if (parse_args(argc, argv, &input_filename, &output_filename, &max_iterations) == 0) {
+    help(&argv[0]);
+    exit(-1);
+  }
   FILE *fout = NULL;
   if (!(fout = fopen(output_filename,"w")))  fout = stdout;
   if (max_iterations <= 0)  max_iterations = 30;
