@@ -12,22 +12,23 @@ void help(char** argv) {
 
 bool parse_args(int argc, char** argv, char **input_filename, 
                   char **output_filename, int* max_iterations) {
-  if (argc < 3)  return 0;
+  if (argc < 3)  
+    return false;
   for (int i = 0; i < argc; i++) {
-    if (strcmp(argv[i], "-i") == 0) {
+    if (strcmp(argv[i], "-i") == 0 && i+1 < argc) {
       i++;
       *input_filename = argv[i];
     }
-    if (strcmp(argv[i], "-o") == 0) {
+    if (strcmp(argv[i], "-o") == 0 && i+1 < argc) {
       i++;
       *output_filename = argv[i];
     }
-    if (strcmp(argv[i], "-m") == 0) {
+    if (strcmp(argv[i], "-m") == 0 && i+1 < argc) {
       i++;
       *max_iterations = atoi(argv[i]);
     }
   }
-  return 1;
+  return true;
 }
 
 int main(int argc, char **argv) {
