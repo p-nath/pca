@@ -33,6 +33,6 @@ $ ./pca_main -i input/input.txt -o output.txt
 ```
 Then run python py/k_means_example.py on the output file -
 ```
-$ pyrhon py/k_means_example.py -i output.txt
+$ python py/k_means_example.py -i output.txt
 
 ```
