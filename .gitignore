@@ -1,6 +1,7 @@
 .DS_Store
 *.o
 pca_main
+qr_example
 output.txt
 new.txt
 output_qr.txt
