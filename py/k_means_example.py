@@ -26,7 +26,7 @@ def main():
   #fin.readline()
   l = [ map(float,line.split(' ')) for line in fin ]
   X = np.array(l)
-  k_means = KMeans(n_clusters = 3)
+  k_means = KMeans(n_clusters=3)
   #print X
   k_means.fit(X)
   print k_means.labels_
