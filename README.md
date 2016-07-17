@@ -15,6 +15,8 @@ To find the pca of a dataset -
 ```
 $ make
 $ ./pca_main -i <'input_filename'> -o <'output_filename'> -m <'max_iteration'>
+
+```
 To find the qr decomposition of a matrix -
 ```
 $ make qr_test 
