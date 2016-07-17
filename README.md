@@ -1,5 +1,5 @@
 #Principal Component Analysis
------------------------------
+
 Implementation of PCA in C.
 Tested with Iris Dataset.
 
@@ -14,13 +14,13 @@ How to use?
 To find the pca of a dataset -
 ```
 $ make
-$ ./pca_main -i <'input_filename'> -o <'output_filename'> -m <'max_iteration'>
+$ ./pca_main -i input/<'input_filename'> -o <'output_filename'> -m <'max_iteration'>
 
 ```
 To find the qr decomposition of a matrix -
 ```
 $ make qr_example 
-$ qr_example -i <'input_filename'> -o <'output_filename'>
+$ qr_example -i input/<'input_filename'> -o <'output_filename'>
 
 ````
 
@@ -28,7 +28,7 @@ To find k-means of the reduced dataset -
 First make and run pca_main on iput.txt to generate an output file with the dataset with reduced dimensions - 
 ```
 $ make
-$ ./pca_main -i input.txt -o output.txt
+$ ./pca_main -i input/input.txt -o output.txt
 
 ```
 Then run python py/k_means_example.py on the output file -
