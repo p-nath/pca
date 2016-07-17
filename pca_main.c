@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
   printf("\n");
 
   int initial_dimensions = 4;
-  int final_dimensions = 2;
+  int final_dimensions = 3;
   //printf("Enter number of dimensions (<4):");
   //scanf("%d",&final_dimensions);
   Matrix* W = CreateProjectionMatrix(U, initial_dimensions, final_dimensions);
