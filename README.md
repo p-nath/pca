@@ -11,7 +11,26 @@ PCA is use to decrease the dimensions of a dataset as per requirement. First the
 
 How to use?
 -----------
-To find the pca of a data set use $:make and execute the pca_main executable using the proper flags.
-To find the qr decomposition of a matrix use $make qr_test and execute the qr_test executable using the necessary flags
+To find the pca of a dataset -
+```
+$ make
+$ ./pca_main -i <'input_filename'> -o <'output_filename'> -m <'max_iteration'>
+To find the qr decomposition of a matrix -
+```
+$ make qr_test 
+$ qr_test -i <'input_filename'> -o <'output_filename'>
 
+````
 
+To find k-means of the reduced dataset - 
+First make and run pca_main on iput.txt to generate an output file with the dataset with reduced dimensions - 
+```
+$ make
+$ ./pca_main -i input.txt -o output.txt
+
+```
+Then run python py/k_means_example.py on the output file -
+```
+$ pyrhon py/k_means_example.py -i output.txt
+
+```
