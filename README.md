@@ -19,8 +19,8 @@ $ ./pca_main -i <'input_filename'> -o <'output_filename'> -m <'max_iteration'>
 ```
 To find the qr decomposition of a matrix -
 ```
-$ make qr_test 
-$ qr_test -i <'input_filename'> -o <'output_filename'>
+$ make qr_example 
+$ qr_example -i <'input_filename'> -o <'output_filename'>
 
 ````
 
