@@ -15,7 +15,7 @@ def get_input_filename():
 
 def main():
   iris = datasets.load_iris()
-  k_means_iris = KMeans(n_clusters = 3)
+  k_means_iris = KMeans(n_clusters=3)
   k_means_iris.fit(iris.data)
   #print iris.data
   print k_means_iris.labels_
