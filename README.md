@@ -12,7 +12,7 @@ PCA is use to decrease the dimensions of a dataset as per requirement. First the
 How to use?
 -----------
 To find the pca of a dataset -
-```
+``` bash
 $ make
 $ ./pca_main -i input/<'input_filename'> -o <'output_filename'> -m <'max_iteration'>
 
