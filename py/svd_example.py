@@ -1,18 +1,17 @@
 import numpy as np
 import sys
+import argparse
 
-def help():
-  print sys.argv[0], "-i <input_filename>"
-  exit(1)
-
-def get_input_filename():
-  if (len(sys.argv) > 1):
-    if (sys.argv[1] == "-i") and (2 < len(sys.argv)):
-      return sys.argv[2]
-  help()
+def parse_args():
+  parser = argparse.ArgumentParser(description="Get input filename.")
+  parser.add_argument("-i", action="store", dest="input_filename", 
+                      default=None, help="Specify input filename.")
+  args = parser.parse_args(sys.argv[1:])
+  return args
 
 def main():
-  input_filename = get_input_filename()
+  args = parse_args()
+  input_filename = args.input_filename
   fin = open(input_filename, 'r')
   fin.readline()
   l = [ map(float,line.split(' ')) for line in fin ]
